@@ -553,3 +553,31 @@ void Adafruit_LIS3DH::getSensor(sensor_t *sensor) {
   sensor->min_value = 0;
   sensor->resolution = 0;
 }
+
+void Adafruit_LIS3DH::setINTpolarity(uint8_t val) {
+  // Set axis for INT1 trigger
+  Adafruit_BusIO_Register _ctrl0 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LIS3DH_REG_INT1CFG, 1);
+  _ctrl0.write(0x03); // Only trigger INT on X axmis movement
+
+  Adafruit_BusIO_Register _ctrl1 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LIS3DH_REG_CTRL6, 1);
+  Adafruit_BusIO_RegisterBits int_data =
+      Adafruit_BusIO_RegisterBits(&_ctrl1, 1, 0);
+
+  // val is 1 for ACTIVE LOW
+  int_data.write(val);
+
+  // Now set threshold
+  Adafruit_BusIO_Register _ctrl2 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LIS3DH_REG_INT1THS, 1);
+
+  Adafruit_BusIO_RegisterBits ths_data =
+      Adafruit_BusIO_RegisterBits(&_ctrl2, 7, 0);
+  ths_data.write(127);
+
+  // Route INT1 correctly
+  Adafruit_BusIO_Register _ctrl3 = Adafruit_BusIO_Register(
+      i2c_dev, spi_dev, ADDRBIT8_HIGH_TOREAD, LIS3DH_REG_CTRL3, 1);
+  _ctrl3.write(0x40); // 0x40 enables INT1
+}

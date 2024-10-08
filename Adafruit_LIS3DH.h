@@ -156,6 +156,11 @@
  */
 #define LIS3DH_REG_CTRL5 0x24
 
+// CTRL_REG6(25h)
+// INT_POLARITY : INT1 and INT2 pin polarity.Default value : 0(0
+//                                                             : active - high;
+//         LIS3DH_REG_CTRL6                                                    1
+//                                                             : active - low)
 /*!
  *  CTRL_REG6
  *  [I2_CLICKen, I2_INT1, 0, BOOT_I1, 0, --, H_L, -]
@@ -399,6 +404,11 @@ public:
   uint8_t getClick(void);
 
   uint8_t readAndClearInterrupt(void);
+
+  void setINTpolarity(uint8_t val);
+
+  //   uint8_t readRegister8(uint8_t reg);
+  //   void writeRegister8(uint8_t reg, uint8_t value);
 
   int16_t x; /**< x axis value */
   int16_t y; /**< y axis value */
